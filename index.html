@@ -4,6 +4,7 @@
     <title>Realtime GPS Tracker</title>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
     <link rel="stylesheet" href="map.css" />
+    Permisions-Policy: interest-cohort=()
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -15,6 +16,17 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    <!-- <script>
+      function newPoint(time) {
+        const radius = 0.00008;
+        let x = (Math.random()) * radius;
+        let y = (Math.random()) * radius;
+        return { lat: window.lat + y, lng: window.lng + x };
+      }
+      setInterval(function () {
+        pubnub.publish({ channel: pnChannel, message: newPoint() });
+      }, 300);
+    </script> -->
   </head>
   <body>
     <div class="bg"></div>
@@ -55,7 +67,7 @@
       const initialize = function () {
         map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: window.lat, lng: window.lng },
-          zoom: 16,
+          zoom: 19,
         });
         mark = new google.maps.Marker({
           position: { lat: window.lat, lng: window.lng },
@@ -65,25 +77,27 @@
 
       window.initialize = initialize;
 
-      //   let redraw = function (payload) {
-      //     if (payload.message.lat) {
-      //       lat = payload.message.lat;
-      //       lng = payload.message.lng;
+        let redraw = function (payload) {
+          if (payload.message.lat_in_degrees) {
+            lat = payload.message.lat_in_degrees;
+            lng = payload.message.long_in_degrees;
+            console.log("현재 lat : " + lat + ", lng : " + lng);
+            lat = parseFloat(lat);
+            lng = parseFloat(lng);
+            map.setCenter({ lat: lat, lng: lng, alt: 0 });
+            mark.setPosition({ lat: lat, lng: lng, alt: 0 });
 
-      //       map.setCenter({ lat: lat, lng: lng, alt: 0 });
-      //       mark.setPosition({ lat: lat, lng: lng, alt: 0 });
+            // lineCoords.push(new google.maps.LatLng(lat, lng));
 
-      //       lineCoords.push(new google.maps.LatLng(lat, lng));
+            // let lineCoordinatesPath = new google.maps.Polyline({
+            //   path: lineCoords,
+            //   geodesic: true,
+            //   strokeColor: "#2E10FF",
+            // });
 
-      //       let lineCoordinatesPath = new google.maps.Polyline({
-      //         path: lineCoords,
-      //         geodesic: true,
-      //         strokeColor: "#2E10FF",
-      //       });
-
-      //       lineCoordinatesPath.setMap(map);
-      //     }
-      //   };
+            // lineCoordinatesPath.setMap(map);
+          }
+        };
 
       const pnChannel = "raspi-tracker";
 
@@ -96,7 +110,7 @@
         var text = document.getElementById("action").textContent;
         if (text == "Start Tracking") {
           pubnub.subscribe({ channels: [pnChannel] });
-          //   pubnub.addListener({ message: redraw });
+          pubnub.addListener({ message: redraw });
           document.getElementById("action").classList.add("btn-danger");
           document.getElementById("action").classList.remove("btn-success");
           document.getElementById("action").textContent = "Stop Tracking";
@@ -112,16 +126,6 @@
       async
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_Yew4vKBunYqef6CSmp-pXegOClmnva0&callback=initialize"
     ></script>
-    <script>
-      function newPoint(time) {
-        const radius = 0.01;
-        let x = Math.random() * radius;
-        let y = Math.random() * radius;
-        return { lat: window.lat + y, lng: window.lng + x };
-      }
-      setInterval(function () {
-        pubnub.publish({ channel: pnChannel, message: newPoint() });
-      }, 500);
-    </script>
+    
   </body>
 </html>
