@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Realtime GPS Tracker</title>
+    <div style="font-size: 8px">Realtime GPS Tracker</div>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
     <link rel="stylesheet" href="map.css" />
-    Permisions-Policy: interest-cohort=()
+    <!-- Permisions-Policy: interest-cohort=() -->
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -29,10 +29,19 @@
     </script> -->
   </head>
   <body>
-    <div class="bg"></div>
+    <div
+      class="bg"
+      style="
+        height: 100%;
+        width: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      "
+    ></div>
     <div class="bg-others">
       <div class="container">
-        <h1>Realtime GPS Tracker with Raspberry PI</h1>
+        <!-- <h1>Realtime GPS Tracker with Raspberry PI</h1> -->
         <div>
           <hr
             style="
@@ -52,7 +61,18 @@
           </button>
         </div>
         <br />
-        <div><div id="map"></div></div>
+        <div>
+          <div
+            id="map"
+            style="
+              width: 100%;
+              height: 350px;
+              border: 6px solid #056af7;
+              box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+                0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            "
+          ></div>
+        </div>
       </div>
     </div>
 
@@ -67,7 +87,7 @@
       const initialize = function () {
         map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: window.lat, lng: window.lng },
-          zoom: 19,
+          zoom: 16,
         });
         mark = new google.maps.Marker({
           position: { lat: window.lat, lng: window.lng },
@@ -77,27 +97,27 @@
 
       window.initialize = initialize;
 
-        let redraw = function (payload) {
-          if (payload.message.lat_in_degrees) {
-            lat = payload.message.lat_in_degrees;
-            lng = payload.message.long_in_degrees;
-            console.log("현재 lat : " + lat + ", lng : " + lng);
-            lat = parseFloat(lat);
-            lng = parseFloat(lng);
-            map.setCenter({ lat: lat, lng: lng, alt: 0 });
-            mark.setPosition({ lat: lat, lng: lng, alt: 0 });
+      let redraw = function (payload) {
+        if (payload.message.lat_in_degrees) {
+          lat = payload.message.lat_in_degrees;
+          lng = payload.message.long_in_degrees;
+          console.log("현재 lat : " + lat + ", lng : " + lng);
+          lat = parseFloat(lat);
+          lng = parseFloat(lng);
+          map.setCenter({ lat: lat, lng: lng, alt: 0 });
+          mark.setPosition({ lat: lat, lng: lng, alt: 0 });
 
-            // lineCoords.push(new google.maps.LatLng(lat, lng));
+          // lineCoords.push(new google.maps.LatLng(lat, lng));
 
-            // let lineCoordinatesPath = new google.maps.Polyline({
-            //   path: lineCoords,
-            //   geodesic: true,
-            //   strokeColor: "#2E10FF",
-            // });
+          // let lineCoordinatesPath = new google.maps.Polyline({
+          //   path: lineCoords,
+          //   geodesic: true,
+          //   strokeColor: "#2E10FF",
+          // });
 
-            // lineCoordinatesPath.setMap(map);
-          }
-        };
+          // lineCoordinatesPath.setMap(map);
+        }
+      };
 
       const pnChannel = "raspi-tracker";
 
@@ -126,6 +146,5 @@
       async
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_Yew4vKBunYqef6CSmp-pXegOClmnva0&callback=initialize"
     ></script>
-    
   </body>
 </html>
